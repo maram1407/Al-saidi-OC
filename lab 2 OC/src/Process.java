@@ -1,79 +1,43 @@
 import java.util.ArrayList;
 import java.util.Random;
-
 public class Process {
-	private int id;
-	private int quant_Process;
-	private int time;
-	private int timeThread;
-	private int Count;
-	private ArrayList<Thread> threads;
-	Random randomTime = new Random ();
-	Random randomCount = new Random ();
+	Random rand = new Random();
+
+	private ArrayList<Thread> Threads;
+
+	private String description = "Процесс ";
+	public int maxTime;
+	public int currentTime;		
+	private int threadMaxTime;
 	
-	public Process (int id, int quant_Process, int Count) {
-		this.id = id;
-		this.Count = Count;
-		this.quant_Process = quant_Process;
-		this.time = quant_Process;
-		this.timeThread = quant_Process;
-		threads = new ArrayList<Thread>();
-		for(int i = 1; i < Count; i ++) {
-			if (timeThread != 0)
-			threads.add(new Thread(i, --timeThread));
+	
+	public Process(String description, int maxTime, Priority priority) {
+
+		this.description += description + " с приоритетом: " + priority.toString();		
+		this.maxTime = maxTime * priority.getNum();		
+		Threads = new ArrayList<Thread>();
+		int threadsNumber = rand.nextInt(4) + 1;		
+		threadMaxTime = this.maxTime/threadsNumber;
+
+		for (int i = 0; i < threadsNumber; i++) {
+			Threads.add(new Thread("" + i, rand.nextInt(10) + 1, threadMaxTime));
 		}
 	}
 	
-	public String getId() {
-		return "Процесс" + id;
-	}
-	
-	public int getQuant() {
-		return quant_Process;
-	}
-	
-	public Thread getThread()
-    {
-        if (threads.size() == 0) 
-        	return null;
-        return threads.get(0);
-    }
-	
-	public int reduceTime() {
-		--time;
-		return time;
-	}
-	
-	public boolean restore() {
-		if(threads.size() != 0 && getTime() == 0 && getThread().getQuant() > 0) {
-			time = quant_Process;
-			return true;
-		}
-		return false;
-	}
-	
-	public int getTime() {
-		return time;
-	}
-	
-	public void run() {
-		if (threads.size() != 0)
-			System.out.println(getThread().printWork());
-		if (threads.size() != 0 && getThread().getQuant() >= 0 ) {
-			getThread().reduceQuant();
-			reduceTime();
-			if (getThread().getQuant() == 0) {
-				System.out.println("Поток " + id + " выполнен");
-				threads.remove(0);
-			}
-				
-		}
+	public int getCount() {
+		return Threads.size();
 	}
 
-	public int Size() {
-		if (threads.size() == 0) 
-			return 0;
-		return threads.size();
+	public boolean isEmpty() {
+		return !Threads.size() >0;
+	}	
+
+	public String getDescription() {
+		return description;
 	}
 
+	public boolean HaveTime() {
+		return maxTime > currentTime;
+	}
+	
 }
